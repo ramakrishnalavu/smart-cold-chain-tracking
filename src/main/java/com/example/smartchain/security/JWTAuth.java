@@ -1,24 +1,30 @@
 package com.example.smartchain.security;
 
-import io.jsonwebtoken.*;
-import io.jsonwebtoken.security.Keys;
-
-import org.springframework.stereotype.Component;
-
 import java.security.Key;
 import java.util.Date;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.security.Keys;
 
 @Component
 public class JWTAuth {
 
-    private final String SECRET = "mysecretkeymysecretkeymysecretkey123"; // >=32 chars
-    private final long EXPIRATION = 1000 * 60 * 60 * 10; // 10 hours
+    @Value("${jwt.secret}")
+    private String SECRET;
+
+    @Value("${jwt.expiration}")
+    private long EXPIRATION;
 
     private Key getSignKey() {
         return Keys.hmacShaKeyFor(SECRET.getBytes());
     }
 
-    // 🔐 Generate Token with Role
+    // Generate Token with Role
     public String generateToken(String username, String role) {
         return Jwts.builder()
                 .setSubject(username)
@@ -29,28 +35,28 @@ public class JWTAuth {
                 .compact();
     }
 
-    // 🔍 Extract Role
+    // Extract Role
     public String extractRole(String token) {
         return extractClaims(token).get("role", String.class);
     }
 
-    // 🔍 Extract Username
+    // Extract Username
     public String extractUsername(String token) {
         return extractClaims(token).getSubject();
     }
 
-    // 🔍 Validate Token
+    // Validate Token
     public boolean validateToken(String token, String username) {
         String extractedUsername = extractUsername(token);
         return (extractedUsername.equals(username) && !isTokenExpired(token));
     }
 
-    // 🔍 Check Expiry
+    // Check Expiry
     private boolean isTokenExpired(String token) {
         return extractClaims(token).getExpiration().before(new Date());
     }
 
-    // 🔍 Extract Claims
+    // Extract Claims
     private Claims extractClaims(String token) {
         return Jwts.parserBuilder()
                 .setSigningKey(getSignKey())
