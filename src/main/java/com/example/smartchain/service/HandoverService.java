@@ -38,4 +38,13 @@ public class HandoverService {
         
         return handoverRepository.save(log);
     }
+
+    public HandoverLog logHandover(HandoverLog log) {
+        log.setTimestamp(LocalDateTime.now());
+        return handoverRepository.save(log);
+    }
+
+    public java.util.List<HandoverLog> getHandoversByShipment(Long shipmentId) {
+        return handoverRepository.findByShipmentId(shipmentId);
+    }
 }

@@ -28,7 +28,7 @@ public class ShipmentService {
     public Shipment assignShipment(Long shipmentId, Long driverId) {
         Shipment shipment = shipmentRepository.findById(shipmentId).orElseThrow();
         User driver = userRepository.findById(driverId).orElseThrow();
-        shipment.setAssignedTo(driver);
+        shipment.setAssignedDriver(driver);
         shipment.setStatus(ShipmentStatus.ASSIGNED);
         return shipmentRepository.save(shipment);
     }
@@ -41,6 +41,11 @@ public class ShipmentService {
 
     public List<Shipment> getAllShipments() {
         return shipmentRepository.findAll();
+    }
+
+    public List<Shipment> getShipmentsByDriver(String username) {
+        User driver = userRepository.findByUsername(username).orElseThrow();
+        return shipmentRepository.findByAssignedDriver(driver);
     }
 
     public Shipment getShipmentById(Long id) {

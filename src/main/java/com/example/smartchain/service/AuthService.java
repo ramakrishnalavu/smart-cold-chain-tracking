@@ -1,6 +1,7 @@
 package com.example.smartchain.service;
 
 import com.example.smartchain.entity.User;
+import com.example.smartchain.model.LoginResponse;
 import com.example.smartchain.repository.UserRepository;
 import com.example.smartchain.security.JWTAuth;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,15 +26,28 @@ public class AuthService {
     private AuthenticationManager authenticationManager;
 
     public User register(User user) {
+        System.out.println("Processing registration for: " + user.getUsername());
+        if (userRepository.findByUsername(user.getUsername()).isPresent()) {
+            throw new RuntimeException("FAIL_USERNAME: Username '" + user.getUsername() + "' is already taken.");
+        }
+        if (userRepository.findByEmail(user.getEmail()).isPresent()) {
+            throw new RuntimeException("FAIL_EMAIL: Email '" + user.getEmail() + "' is already registered.");
+        }
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         return userRepository.save(user);
     }
 
-    public String login(String username, String password) {
+    public LoginResponse login(String username, String password) {
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(username, password)
         );
         User user = userRepository.findByUsername(username).orElseThrow();
-        return jwtAuth.generateToken(user.getUsername(), user.getRole().name());
+        String token = jwtAuth.generateToken(user.getUsername(), user.getRole().name());
+        
+        return LoginResponse.builder()
+                .token(token)
+                .username(user.getUsername())
+                .role(user.getRole().name())
+                .build();
     }
 }

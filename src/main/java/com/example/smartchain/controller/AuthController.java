@@ -1,6 +1,7 @@
 package com.example.smartchain.controller;
 
 import com.example.smartchain.entity.User;
+import com.example.smartchain.model.LoginResponse;
 import com.example.smartchain.service.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -15,11 +16,12 @@ public class AuthController {
 
     @PostMapping("/register")
     public User register(@RequestBody User user) {
+        System.out.println("Received registration request for: " + user.getUsername() + ", Role: " + user.getRole());
         return authService.register(user);
     }
 
     @PostMapping("/login")
-    public String login(@RequestBody User loginRequest) {
+    public LoginResponse login(@RequestBody User loginRequest) {
         return authService.login(loginRequest.getUsername(), loginRequest.getPassword());
     }
 }

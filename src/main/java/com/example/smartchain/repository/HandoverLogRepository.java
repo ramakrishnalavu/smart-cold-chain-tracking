@@ -7,4 +7,5 @@ import java.util.List;
 
 public interface HandoverLogRepository extends JpaRepository<HandoverLog, Long> {
     List<HandoverLog> findByShipment(Shipment shipment);
+    List<HandoverLog> findByShipmentId(Long shipmentId);
 }
