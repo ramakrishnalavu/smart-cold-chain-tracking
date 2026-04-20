@@ -1,14 +1,15 @@
 package com.example.smartchain.service;
 
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import com.example.smartchain.entity.Shipment;
 import com.example.smartchain.entity.User;
 import com.example.smartchain.model.ShipmentStatus;
 import com.example.smartchain.repository.ShipmentRepository;
 import com.example.smartchain.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 public class ShipmentService {
